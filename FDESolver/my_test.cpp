@@ -17,6 +17,11 @@ int main() {
 	cout << A * B;
 	matrix<double> C = A;
 	cout << C * A;
-
+	cout << "test transpose:" << endl;
+	A.transpose();
+	B.transpose();
+	cout << A;
+	cout << B;
+	cout << transpose(B);
 	return 0;
 }

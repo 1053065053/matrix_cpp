@@ -81,6 +81,7 @@ matrix<T>::~matrix() {
         delete[] Data[i];
     }
     delete[] Data;
+    cout << "has used the destructor" << endl;
 }
 
 template<typename T>
@@ -138,8 +139,25 @@ matrix<T> transpose(const matrix<T>& m) {
     matrix<T> temp(m.col(), m.row());
     for (int i = 0; i < m.col(); i++) {
         for (int j = 0; j < m.row(); j++) {
-            temp(i, j) = m(j, i);
+            temp(i, j) = m.get_data(j,i);
         }
     }
     return temp;
+}
+
+template<typename T>
+void matrix<T>::transpose() {
+    if (this->rows == this->cols) {//no need to apply a new memory
+        T temp;
+        for (int i = 0; i < this->col(); i++) {
+            for (int j = i+1; j <this->row(); j++) {
+                temp = this->operator()(j, i);
+                this->operator()(j,i) = this->operator()(i,j);
+                this->operator()(i, j) = temp;
+            }
+        }
+    }
+    else {//call the non-member function transpose
+        this->operator= (::transpose(*this));
+    }
 }
