@@ -23,5 +23,9 @@ int main() {
 	cout << A;
 	cout << B;
 	cout << transpose(B);
+	cout << "begin test kroneck product" << endl;
+	cout << kron(A, B);
+	cout << kron(B, A);
+	cout << kron(A, A);
 	return 0;
 }

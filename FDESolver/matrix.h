@@ -35,6 +35,8 @@ class matrix {
     matrix operator*(const matrix<T> &m) const;
     //overload operator() to realize get_data_refer
     T& operator()(const int& row, const int& col);
+    //overload operator() to realize get_data
+    T operator()(const int& row, const int& col) const;
 	//tranpose
     void transpose();
 };
@@ -44,6 +46,12 @@ ostream& operator<<(ostream& os, const matrix<T>& m);
 //transpose
 template<typename T>
 matrix<T> transpose(const matrix<T>& m);
+//kroneck product
+template<typename T>
+matrix<T> kron(const matrix<T>& m1, const matrix<T>& m2);
+//generate unit matrix
+template<typename T>
+matrix<T> unit(const int& k);
 
 
 
@@ -160,4 +168,29 @@ void matrix<T>::transpose() {
     else {//call the non-member function transpose
         this->operator= (::transpose(*this));
     }
+}
+
+template<typename T>
+T matrix<T>::operator()(const int& row, const int& col) const {
+    return this->get_data(row,col);
+}
+
+template<typename T>
+matrix<T> kron(const matrix<T>& m1, const matrix<T>& m2) {
+    matrix<T> temp(m1.row() * m2.row(), m1.col() * m2.col());
+    for (int i = 0; i < m1.row(); ++i) {
+        for (int j = 0; j < m1.col(); ++j) {
+            for (int k = 0; k < m2.row(); ++k) {
+                for (int m = 0; m < m2.col(); ++m) {
+                    temp(i*m2.row()+k,j*m2.col()+m ) = m1(i, j) * m2(k, m);
+                }
+            }
+        }
+    }
+    return temp;
+}
+
+template<typename T>
+matrix<T> unit(const int& k) {
+    //使用toeplitz来实现
 }
