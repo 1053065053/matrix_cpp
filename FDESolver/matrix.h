@@ -12,11 +12,18 @@ class matrix {
 
   public:
     //default constructor
+      matrix() :Data(NULL), rows(0), cols(0) { cout << "call the default constructor" << endl; }
     // constructor
       matrix(const int& rr, const int& cc);
 
     // copy constructor
     matrix(const matrix<T> &m);
+    // move constructor...这个地方有点奇怪，在类外部实现会报错
+    matrix(matrix<T>&& m) noexcept :Data(m.Data), rows(m.rows), cols(m.cols) {
+        m.Data = nullptr;
+        m.rows = m.cols = 0;
+        cout << "has called move constructor" << endl;
+    }
     // can be used to change the ith row and the jth col, 0<=i<=rows-1,
     // 0<=j<=cols-1
     T& get_data_refer(const int &row, const int &col);
@@ -26,7 +33,7 @@ class matrix {
     // destructor
     ~matrix();
     // overload operator=
-    void operator=(const matrix<T> &m);
+    matrix<T>& operator=(const matrix<T> &m);
     // get rows
     int row() const;
     // get cols
@@ -40,6 +47,8 @@ class matrix {
 	//tranpose
     void transpose();
 };
+
+
 //overload standard output
 template<typename T>
 ostream& operator<<(ostream& os, const matrix<T>& m);
@@ -50,9 +59,10 @@ matrix<T> transpose(const matrix<T>& m);
 template<typename T>
 matrix<T> kron(const matrix<T>& m1, const matrix<T>& m2);
 //generate unit matrix
+matrix<int> unit(const int& k);
+//generate toeplitz matrix, m is an odd dimensional column vector
 template<typename T>
-matrix<T> unit(const int& k);
-
+matrix<T> toep(const matrix<T>& m);
 
 
 
@@ -85,6 +95,8 @@ matrix<T>::matrix(const matrix<T>& m) { *this = m; cout << "has used copy constr
 
 template<typename T>
 matrix<T>::~matrix() {
+    /*cout << "destorying the:" << endl;
+    cout << *this;*/
     for (int i = 0; i < rows; i++) {
         delete[] Data[i];
     }
@@ -97,19 +109,31 @@ T matrix<T>::get_data(const int& row, const int& col) const {
     return Data[row][col];
 }
 template<typename T>
-void matrix<T>::operator=(const matrix<T>& m) {
+matrix<T>& matrix<T>::operator=(const matrix<T>& m) {
+    if (&m != this) {
+        cout << "无事发生" << endl;
+        cout << this->rows << endl;
+        cout << this->cols << endl;
+        for (int i = 0; i < this->rows; i++) {
+            delete[] Data[i];
+            cout << "无事发生" << endl;
+        }
+        delete[] Data;
 
-    cols = m.col();
-    rows = m.row();
-    //注意一下这里会不会有内存泄漏
-    Data = new T * [rows];
+        cout << "无事发生" << endl;
+        cols = m.col();
+        rows = m.row();
+        //注意一下这里会不会有内存泄漏
+        Data = new T * [rows];
 
-    for (int i = 0; i < rows; i++) {
-        Data[i] = new T[cols];
-        for (int j = 0; j < cols; j++) {
-            Data[i][j] = m.get_data(i, j);
+        for (int i = 0; i < rows; i++) {
+            Data[i] = new T[cols];
+            for (int j = 0; j < cols; j++) {
+                Data[i][j] = m.get_data(i, j);
+            }
         }
     }
+    return *this;
 }
 template<typename T>
 int matrix<T>::col() const { return cols; }
@@ -191,6 +215,21 @@ matrix<T> kron(const matrix<T>& m1, const matrix<T>& m2) {
 }
 
 template<typename T>
-matrix<T> unit(const int& k) {
-    //使用toeplitz来实现
+matrix<T> toep(const matrix<T>& m) {
+    int m_length = m.row();
+    int res_rows = m.row() / 2 + 1;
+    matrix<T> res(res_rows, res_rows);
+    for (int i = 0; i < res_rows; ++i) {
+        for (int j = 0; j < res_rows; ++j) {
+            res(i, j) = m(i - j + res_rows - 1, 0);
+        }
+    }
+    return res;
 }
+
+//template<typename T>
+//matrix<T>::matrix(matrix<T>&& m) noexcept :Data(m.Data), rows(m.rows), cols(m.cols) {
+//    m.Data = nullptr;
+//    m.rows = m.cols = 0;
+//    cout << "has called move constructor" << endl;
+//}
