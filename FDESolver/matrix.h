@@ -22,7 +22,7 @@ class matrix {
     matrix(matrix<T>&& m) noexcept :Data(m.Data), rows(m.rows), cols(m.cols) {
         m.Data = nullptr;
         m.rows = m.cols = 0;
-        cout << "has called move constructor" << endl;
+        /*cout << "has called move constructor" << endl;*/
     }
     // can be used to change the ith row and the jth col, 0<=i<=rows-1,
     // 0<=j<=cols-1
@@ -63,6 +63,9 @@ matrix<int> unit(const int& k);
 //generate toeplitz matrix, m is an odd dimensional column vector
 template<typename T>
 matrix<T> toep(const matrix<T>& m);
+//assume T is double. and the input is a column vector. when flag == -1, the output is 
+//the FFT of v. When flag == 1, the output is the iFFT of v.
+matrix<double> fft(const matrix<double>& v, const int& flag);
 
 
 
@@ -91,7 +94,7 @@ matrix<T>::matrix(const int& rr, const int& cc) {
 }
 
 template<typename T>
-matrix<T>::matrix(const matrix<T>& m) { *this = m; cout << "has used copy constructor" << endl; }
+matrix<T>::matrix(const matrix<T>& m) { *this = m; /*cout << "has used copy constructor" << endl;*/ }
 
 template<typename T>
 matrix<T>::~matrix() {
@@ -101,7 +104,7 @@ matrix<T>::~matrix() {
         delete[] Data[i];
     }
     delete[] Data;
-    cout << "has used the destructor" << endl;
+    /*cout << "has used the destructor" << endl;*/
 }
 
 template<typename T>

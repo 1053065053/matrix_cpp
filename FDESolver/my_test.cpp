@@ -1,4 +1,5 @@
 #include<iostream>
+#include<fftw3.h>
 #include"matrix.h"
 using namespace std;
 
@@ -34,9 +35,18 @@ int main() {
 	C(1, 0) = 1;
 	C(2, 0) = 2;
 	C(3, 0) = 3;
-	C(4, 0) = 4;
+	C(4, 0) = 10;
 	cout << toep(C);
 	cout << unit(10);
 	cout << "over!" << endl;
+
+	cout << "FFT test:" << endl;
+	cout << C;
+	cout << fft(C, -1);
+	cout << fft(fft(C, -1),1);
+
+
 	return 0;
+
+
 }
