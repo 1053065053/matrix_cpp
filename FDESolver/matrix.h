@@ -156,11 +156,15 @@ matrix<T> matrix<T>::operator*(const matrix<T>& m) const {
 
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < m.col(); j++) {
-            double temp = 0;
-            for (int k = 0; k < cols; k++) {
-                temp += Data[i][k] * m.Data[k][j];
+            res.get_data_refer(i, j) = 0;
+        }
+    }
+    for (int i = 0; i < rows; i++) {
+        for (int k = 0; k < cols; ++k) {
+            T temp = Data[i][k];
+            for (int j = 0; j < m.col(); ++j) {
+                res(i, j) += temp * m(k,j);
             }
-            res.get_data_refer(i, j) = temp;
         }
     }
     return res;

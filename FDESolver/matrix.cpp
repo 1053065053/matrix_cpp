@@ -13,29 +13,33 @@ matrix<int> unit(const int& k) {
 
 matrix<double> fft(const matrix<double>& v, const int& flag) {
     //call the fftw
-	fftw_complex* in;
+	fftw_complex* in, *out;
 	fftw_plan p;
 	int N = v.row();
 	in = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * N);
-	p = fftw_plan_dft_1d(N, in, in, 1, FFTW_ESTIMATE);
+	out = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * N);
+	p = fftw_plan_dft_1d(N, in, out,-1, FFTW_ESTIMATE);
 
 	for (int i = 0; i < N; ++i) {
 		in[i][0] = v(i, 0);
 		in[i][1] = 0;
 	}
 	fftw_execute(p);
-
+	
 	matrix<double> res(N,1);
 	if (flag == -1) {
 		for (int i = 0; i < N; ++i) {
-			res(i, 0) = in[i][0];
+			res(i, 0) = out[i][0];
+			cout << in[i][0] << endl;
 		}
 	}else {
 		for (int i = 0; i < N; ++i) {
-			res(i, 0) = in[i][0];
+			res(i, 0) = out[i][0];
+			cout << in[i][0] << endl;
 		}
 	}
 	fftw_destroy_plan(p);
 	fftw_free(in);
+	fftw_free(out);
 	return res;
 }
